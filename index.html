@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moustache de Chat App</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">MOUSTACHE<span>Beat</span></div>
+
+    <!-- Crossfader DJ (Selector Día / Noche) -->
+    <div class="fader-container">
+      <span class="fader-label">NIGHT</span>
+      <div class="crossfader-track" id="themeFader" title="Cambiar ambiente">
+        <div class="crossfader-handle"></div>
+      </div>
+      <span class="fader-label">DAY</span>
+    </div>
+
+    <button class="auth-btn" id="authBtn" type="button">Entrar</button>
+  </header>
+
+  <main>
+    <!-- VISTA INICIO -->
+    <section id="viewInicio" class="view-section active">
+      <h1 class="hero-title">Studio Dashboard</h1>
+      <p class="subtitle">Métricas y lanzamientos activos.</p>
+
+      <div class="grid stats-grid">
+        <div class="card-stat">
+          <div class="stat-num">24</div>
+          <div class="stat-label">Tracks</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-num">08</div>
+          <div class="stat-label">Masters</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Recientes</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-img">Waveform</div>
+          <div class="card-title">Project Alpha</div>
+          <div class="card-meta">Mixing • 150 BPM</div>
+        </div>
+        <div class="card">
+          <div class="card-img">Mastering</div>
+          <div class="card-title">Hybrid Track 02</div>
+          <div class="card-meta">Mastering • 48kHz</div>
+        </div>
+        <div class="card">
+          <div class="card-img">Artwork</div>
+          <div class="card-title">La colline des chats</div>
+          <div class="card-meta">Final Cut • Techno</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA PLAY -->
+    <section id="viewPlay" class="view-section">
+      <h1 class="hero-title">Audio Player</h1>
+      <p class="subtitle">Monitor de audio en tiempo real.</p>
+
+      <div class="player-container">
+        <div class="player-artwork">24-BIT / 44.1kHz</div>
+        <h2 class="player-track-title">Track Preview 01</h2>
+        <p class="player-track-subtitle">Moustache Lab Studio</p>
+
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+
+        <div class="player-controls">
+          <button class="btn-control" type="button">Anterior</button>
+          <button class="btn-control active-btn" type="button">Play / Pause</button>
+          <button class="btn-control" type="button">Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA BIBLIOTECA -->
+    <section id="viewBiblioteca" class="view-section">
+      <h1 class="hero-title">Biblioteca</h1>
+      <p class="subtitle">Gestión de pistas y colecciones.</p>
+
+      <div class="library-layout">
+        <div class="library-sidebar">
+          <ul class="sidebar-menu">
+            <li class="sidebar-item active">Biblioteca</li>
+            <li class="sidebar-item">Pistas +</li>
+            <li class="sidebar-item">Álbumes +</li>
+            <li class="sidebar-item">Público</li>
+          </ul>
+        </div>
+
+        <div class="library-content">
+          <div class="library-header">
+            <input type="text" class="search-input" placeholder="Buscar pistas...">
+            <button class="btn-new" type="button">+ Nuevo Track</button>
+          </div>
+
+          <div class="empty-state">
+            <p>Sube una pista para empezar a masterizar</p>
+            <button class="btn-new" type="button">+ Subir Archivo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA PERFIL -->
+    <section id="viewPerfil" class="view-section">
+      <h1 class="hero-title">Mi Perfil</h1>
+      <p class="subtitle" id="userStatus">Inicia sesión para acceder a tus tracks.</p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-img">Artwork 1:1</div>
+          <div class="card-title">Track Title</div>
+          <div class="card-meta">Artist • Genre</div>
+        </div>
+        <div class="card">
+          <div class="card-img">Artwork 1:1</div>
+          <div class="card-title">Release Title</div>
+          <div class="card-meta">Label • 128 BPM</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BARRA NAVEGACIÓN INFERIOR -->
+  <nav class="bottom-bar">
+    <button class="nav-item active" data-target="viewInicio" type="button">Inicio</button>
+    <button class="nav-item" data-target="viewPlay" type="button">Play</button>
+    <button class="nav-item" data-target="viewBiblioteca" type="button">Biblioteca</button>
+    <button class="nav-item" data-target="viewPerfil" id="bottomProfileBtn" type="button">Perfil</button>
+  </nav>
+
+  <!-- MODAL AUTENTICACIÓN -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="close-btn" id="closeAuth" type="button">&times;</button>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabLogin" type="button">Email</button>
+        <button class="tab-btn" id="tabRegister" type="button">Registro</button>
+      </div>
+
+      <form id="authForm">
+        <div class="form-group" id="usernameGroup" style="display: none;">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" placeholder="dj_producer" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" required placeholder="tu@email.com" autocomplete="email">
+        </div>
+
+        <div class="form-group" id="passwordGroup">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Entrar</button>
+        <div class="msg-box" id="msgBox"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
